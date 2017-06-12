@@ -27,8 +27,8 @@ Hero.prototype.changeType = function (type) {
 };
 
 Hero.prototype.swing = function () {
-  var swingAction = Tiny.RotateBy(200, {rotation: Tiny.deg2radian(10)});
-  this.runAction(Tiny.RepeatForever(swingAction));
+  var swingAction = Tiny.RotateTo(200, {rotation: Tiny.deg2radian(10)});
+  this.runAction(Tiny.RepeatForever(Tiny.Back(swingAction)));
 };
 
 Hero.prototype.listenDrag = function (self) {
