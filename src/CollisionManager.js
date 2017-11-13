@@ -15,8 +15,10 @@ CollisionManager.prototype.update = function () {
 };
 
 CollisionManager.prototype.heroVsLines = function () {
-  var hero = this._layer._hero, lines = this._layer._lines, linesContainer = this._layer._linesContainer;
-
+  var layer = this._layer;
+  var hero = layer._hero;
+  var lines = layer._lines;
+  var linesContainer = layer._linesContainer;
   var collide = false;
 
   if (linesContainer.children.length == 0 || !lines._solidify) {
@@ -28,8 +30,8 @@ CollisionManager.prototype.heroVsLines = function () {
       hero.getPositionY() - 5,
       true,
       lines,
-      lines.getPositionX(),
-      lines.getPositionY(),
+      lines.getPositionX() - 16,
+      lines.getPositionY() - 16,
       false);
   }
 
@@ -37,8 +39,9 @@ CollisionManager.prototype.heroVsLines = function () {
 };
 
 CollisionManager.prototype.heroVsBomb = function () {
-  var hero = this._layer._hero, bombs = this._layer._bombConatainer._bombList;
-
+  var layer = this._layer;
+  var hero = layer._hero;
+  var bombs = layer._bombConatainer._bombList;
   var collide = false;
 
   bombs.forEach(function (item) {

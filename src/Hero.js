@@ -32,27 +32,31 @@ Hero.prototype.swing = function () {
 };
 
 Hero.prototype.listenDrag = function (self) {
-  self.mousedown = this.touchstart = function (data) {
+  var dragging = false;
+  var pointData = null;
+  var clickHandler = function (data) {
     data.stopPropagation();
-    self.pointData = data;
-    self.dragging = true;
+    pointData = data;
+    dragging = true;
   };
-
-  self.mouseup = this.mouseupoutside = this.touchend = this.touchendoutside = function (data) {
-    self.dragging = false;
-    self.pointData = null;
+  var leaveHandler = function (data) {
+    dragging = false;
+    pointData = null;
   };
+  this.on('pointerdown', clickHandler);
+  this.on('pointerup', leaveHandler);
+  this.on('pointerupoutside', leaveHandler);
+  this.on('pointermove', (data) => {
+    var layer = this._layer;
+    if (dragging && pointData && !layer._die) {
+      var newPos = pointData.data.getLocalPosition(this.parent);
+      this.setPosition(newPos.x, newPos.y);
 
-  self.mousemove = self.touchmove = function (data) {
-    if (self.dragging && self.pointData && !self._layer._die) {
-      var newPos = self.pointData.data.getLocalPosition(self.parent);
-      self.setPosition(newPos.x, newPos.y);
-
-      if (self._layer._collisionManager.heroVsLines()) {
-        self._layer.gameOver();
+      if (layer._collisionManager.heroVsLines()) {
+        layer.gameOver();
       }
     }
-  };
+  });
 };
 
 Hero.prototype.die = function () {

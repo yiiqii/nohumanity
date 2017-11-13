@@ -14,8 +14,9 @@ LinesLayer.prototype.constructor = LinesLayer;
 
 LinesLayer.prototype.create = function (solidify) {
   var g = this._g;
-
-  var space = 16, ww = Tiny.WIN_SIZE.width + space, wh = Tiny.WIN_SIZE.height + space;
+  var space = 16; // 固定值，避免创建的线条首尾在画布显示有"缺口"，值的规则为 lineWidth 的最大值
+  var ww = Tiny.WIN_SIZE.width + space; // 线条占据画布的宽度
+  var wh = Tiny.WIN_SIZE.height + space; // 线条占据画布的高度
   this._solidify = solidify;
 
   g.clear();
@@ -28,20 +29,22 @@ LinesLayer.prototype.create = function (solidify) {
     console.log('lineNum:', this._lineNum);
 
     for (var i = 0; i < this._lineNum; i++) {
-      var arr = [], ran, sx, sy, ex, ey, direction = Tiny.randomBool();
-
-      arr.push(Tiny.randomFromArray([1, 1, 2, 2, 2, 3, 3, 3, 4, 6, 8]));
-
-      ran = Tiny.randomFromArray([-1, 0, 2, 4, 6, 8, 10, 11]) % 2;//[-1,0,1]
+      var sx; // 线条起点 x
+      var sy; // 线条起点 y
+      var ex; // 线条终点 x
+      var ey; // 线条终点 y
+      var direction = Tiny.randomBool(); // 随机水平方向 or 垂直方向
+      var lineWidth = Tiny.randomFromArray([1, 1, 2, 2, 2, 3, 3, 3, 4, 6, 8]);
+      var endRan = Tiny.randomFromArray([-1, 0, 0, 0, 0, 0, 0, 1]) % 2;
 
       if (direction) {//横向
         sx = -space;
         sy = Tiny.random(-space, wh);
 
-        if (ran == -1) {
+        if (endRan == -1) {
           ex = Tiny.random(ww / 2, ww);
           ey = wh;
-        } else if (ran == 0) {
+        } else if (endRan == 0) {
           ex = ww;
           ey = Tiny.random(-space, wh);
         } else {
@@ -52,10 +55,10 @@ LinesLayer.prototype.create = function (solidify) {
         sx = Tiny.random(-space, ww);
         sy = -space;
 
-        if (ran == -1) {
+        if (endRan == -1) {
           ex = -space;
           ey = Tiny.random(wh / 2, wh);
-        } else if (ran == 0) {
+        } else if (endRan == 0) {
           ex = Tiny.random(-space, ww);
           ey = wh;
         } else {
@@ -64,15 +67,17 @@ LinesLayer.prototype.create = function (solidify) {
         }
       }
 
-      this._lineGroup.push(arr.concat([sx, sy, ex, ey, ran, direction]));
-
+      this._lineGroup.push([lineWidth, sx, sy, ex, ey, endRan, direction]);
       g.lineStyle(1, 0x333333, 0.1);
       g.moveTo(sx, sy);
       g.lineTo(ex, ey);
     }
   } else {
     this._lineGroup.forEach(function (item) {
-      var sx = item[1], sy = item[2], ex = item[3], ey = item[4];
+      var sx = item[1];
+      var sy = item[2];
+      var ex = item[3];
+      var ey = item[4];
       g.lineStyle(item[0], 0x333333);
       g.moveTo(sx, sy);
       g.lineTo(ex, ey);
@@ -80,19 +85,9 @@ LinesLayer.prototype.create = function (solidify) {
   }
 
   var texture = Tiny.app.renderer.generateTexture(g);
-  var trh = texture.baseTexture.realHeight, trw = texture.baseTexture.realWidth;
-  var diffX = space / 2, diffY = space / 2;
-
-  if (!this._solidify) {
-    this._trh = trh;
-    this._trw = trw;
-  } else {
-    diffX += (trw - this._trw) / 2;
-    diffY += (trh - this._trh) / 2;
-  }
-
-  texture.frame = new Tiny.Rectangle(diffX, diffY, ww - diffX, wh - diffY);
   var sprite = new Tiny.Sprite(texture);
+  sprite.position.x -= space;
+  sprite.position.y -= space;
 
   this.removeChildren();
   this.addChild(sprite);

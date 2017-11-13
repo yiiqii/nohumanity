@@ -38,22 +38,22 @@ Bomb.prototype.clear = function () {
 };
 
 Bomb.prototype.create = function () {
-  var bomb = new Tiny.Sprite.fromFrame('bomb.png');
+  var bomb = Tiny.Sprite.fromFrame('bomb.png');
   var hero = this._layer._hero;
-  var self = this,
-    x = 0,
-    y = 0,
-    winWidth = Tiny.WIN_SIZE.width,
-    winHeight = Tiny.WIN_SIZE.height,
-    w = bomb.width,
-    h = bomb.height,
-    targetX = hero.getPositionX(),
-    targetY = hero.getPositionY(),
-    endX = -w,
-    endY = -h,
-    angle = 0,
-    speed = Tiny.randomInt(6000, 7000),
-    scale = Tiny.randomFromArray([0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.5, 0.5, 0.5, 0.8]);
+  var self = this;
+  var x = 0;
+  var y = 0;
+  var winWidth = Tiny.WIN_SIZE.width;
+  var winHeight = Tiny.WIN_SIZE.height;
+  var w = bomb.width;
+  var h = bomb.height;
+  var targetX = hero.getPositionX();
+  var targetY = hero.getPositionY();
+  var endX = -w;
+  var endY = -h;
+  var angle = 0;
+  var speed = Tiny.randomInt(6000, 7000);
+  var scale = Tiny.randomFromArray([0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.5, 0.5, 0.5, 0.8]);
 
   if (this._layer._die) {
     targetX = Tiny.randomInt(0, Tiny.WIN_SIZE.width);

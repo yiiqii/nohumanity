@@ -28,8 +28,6 @@ var StartLayer = function () {
   //碰撞检测
   this._collisionManager = new CollisionManager(this);
 
-  this.interactive = true;
-
   this._die = false;
 
   this._speed = 1;
@@ -60,7 +58,6 @@ StartLayer.prototype.init = function () {
 
 //OVERWRITE
 StartLayer.prototype.updateTransform = function () {
-
   if (!this._die) {
     this._lTicker && this.lTick();
     this._slTicker && this.slTick();
@@ -90,14 +87,9 @@ StartLayer.prototype.gameOver = function () {
 
 StartLayer.prototype.createLines = function (solidify) {
   this._lines.create(solidify);
-  if (solidify) {
-    var fadeInAction = Tiny.FadeIn(300);
-    this._lines.setOpacity(0.1);
-    this._lines.runAction(fadeInAction);
-  }
-
   this._linesContainer.removeChildren();
   this._linesContainer.addChild(this._lines);
+  solidify && (this._lines.data = Tiny.app.renderer.plugins.extract.pixels(this._lines));
 };
 
 StartLayer.prototype.lTick = function () {
@@ -127,7 +119,6 @@ StartLayer.prototype.slTick = function () {
   if (round >= this._slTime) {
     console.log(new Date().getSeconds(), 'createSolidifyLines');
     this.createLines(true);
-    this._lines.data = Tiny.app.renderer.plugins.extract.pixels(this._lines);
 
     this._lTicker = true;
     this._slTicker = false;

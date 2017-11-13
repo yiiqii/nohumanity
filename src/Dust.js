@@ -21,7 +21,7 @@ Dust.prototype.updateTransform = function () {
 
 Dust.prototype.create = function (x, y) {
   this._instance = new Tiny.Dust(x, y, function () {
-      return new Tiny.Sprite.fromFrame('fragment.png')
+      return Tiny.Sprite.fromFrame('fragment.png')
     }, this,
     {
       number: 50,
